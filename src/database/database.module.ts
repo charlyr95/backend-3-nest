@@ -4,7 +4,7 @@ import { mongoConfig } from '../config/mongo-config';
 
 @Global()
 @Module({
-  imports: [MongooseModule.forRoot(mongoConfig.uri, mongoConfig.config)],
+  imports: [MongooseModule.forRootAsync(mongoConfig)],
   exports: [MongooseModule],
 })
 export class DatabaseModule {}

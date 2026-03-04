@@ -1,6 +1,6 @@
 import { jwtConfig } from '../config/jwt-config';
 
 export const jwtConstants = {
-  secret: jwtConfig.secret.access || 'your_secret_key_here',
-  refreshSecret: jwtConfig.secret.refresh || 'your_refresh_secret_key_here',
+  secret: jwtConfig.secret_key || 'your_secret_key_here',
+  refreshKey: jwtConfig.refresh_key || 'your_refresh_secret_key_here',
 };

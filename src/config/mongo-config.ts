@@ -1,12 +1,8 @@
-export interface mongoConfig {
-  uri: string;
-  config: object;
-}
+import { MongooseModuleAsyncOptions } from '@nestjs/mongoose';
 
-export const mongoConfig: mongoConfig = {
-  uri: process.env.MONGO_URI || 'mongodb://localhost:27017/mi-app',
-  config: {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
+export const mongoConfig: MongooseModuleAsyncOptions = {
+  useFactory: () => ({
+    uri: process.env.MONGO_URL || 'mongodb://localhost:27017/mi-app',
+    dbName: process.env.DB_NAME || 'mi-app',
+  }),
 };
