@@ -18,14 +18,16 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(
+    user: any,
+  ): Promise<{ access_token: string; refresh_token: string } | null> {
     if (!user) {
       return null; // Return null if user validation fails
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const payload = user; // You can customize the payload as needed
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    const access_token = await this.jwtService.signAsync(payload);
+    const refresh_token = await this.jwtService.signAsync(payload);
+    return { access_token, refresh_token };
   }
 }
