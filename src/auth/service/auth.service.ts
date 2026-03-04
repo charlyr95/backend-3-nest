@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/service/users.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
@@ -12,5 +16,16 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+
+  async login(user: any) {
+    if (!user) {
+      return null; // Return null if user validation fails
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const payload = user; // You can customize the payload as needed
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
