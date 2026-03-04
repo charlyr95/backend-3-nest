@@ -1,7 +1,7 @@
 export interface CookieOptions {
   httpOnly: boolean;
   secure: boolean;
-  sameSite: 'lax' | 'strict' | 'none';
+  sameSite: 'strict' | 'lax' | 'none';
   maxAge: number;
 }
 
@@ -29,4 +29,4 @@ export const cookieConfig: Record<string, CookieConfig> = {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     },
   },
-} as const;
+};
