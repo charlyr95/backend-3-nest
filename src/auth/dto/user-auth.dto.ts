@@ -1,5 +1,1 @@
-
-
-export class UserAuthDto {
-  
-}
+export class UserAuthDto {}
