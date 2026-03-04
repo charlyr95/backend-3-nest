@@ -1,7 +1,18 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Res,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 import { LocalAuthGuard } from '../guard/local-auth.guard';
+import { cookieConfig } from '../../config/cookie-config';
+import { LoginDto } from '../dto/login.dto';
+import express from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -9,11 +20,16 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: express.Response,
+    @Req() req: express.Request,
+  ) {
     const tokens = await this.authService.login(req.user);
     const access_token = tokens?.access_token ?? '';
     const refresh_token = tokens?.refresh_token ?? '';
+    res.cookie('access_token', access_token, cookieConfig.access.options);
+    res.cookie('refresh_token', refresh_token, cookieConfig.refresh.options);
     return { access_token, refresh_token };
   }
 
@@ -25,8 +41,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+  getProfile(@Req() req: express.Request) {
     return req.user;
   }
 
