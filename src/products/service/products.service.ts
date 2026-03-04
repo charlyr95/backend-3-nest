@@ -18,11 +18,7 @@ export class ProductsService {
   }
 
   async findAll(): Promise<Products[]> {
-    const products = await this.productModel.find().exec();
-    if (!products || products.length === 0) {
-      throw new Error('No products found');
-    }
-    return products;
+    return this.productModel.find().exec();
   }
 
   async findOne(id: string): Promise<Products> {
@@ -37,10 +33,6 @@ export class ProductsService {
     id: string,
     updateProductDto: UpdateProductDto,
   ): Promise<Products> {
-    const product = await this.productModel.findById(id).exec();
-    if (!product) {
-      throw new Error('Product not found');
-    }
     const updatedProduct = await this.productModel
       .findByIdAndUpdate(id, updateProductDto, { new: true })
       .exec();
@@ -51,10 +43,6 @@ export class ProductsService {
   }
 
   async remove(id: string): Promise<Products> {
-    const product = await this.productModel.findById(id).exec();
-    if (!product) {
-      throw new Error('Product not found');
-    }
     const deletedProduct = await this.productModel.findByIdAndDelete(id).exec();
     if (!deletedProduct) {
       throw new Error('Product not found');
