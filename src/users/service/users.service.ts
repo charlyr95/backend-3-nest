@@ -1,10 +1,14 @@
-import { Model } from 'mongoose';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { Model, Types } from 'mongoose';
 import { Users } from '../schema/users.schema';
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -13,8 +17,15 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<Users> {
-    const createdUser = new this.usersModel(createUserDto);
-    return createdUser.save();
+    try {
+      const createdUser = new this.usersModel(createUserDto);
+      return await createdUser.save();
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new BadRequestException(`Email already exists`);
+      }
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll(): Promise<Users[]> {
@@ -24,34 +35,55 @@ export class UsersService {
   async findByEmail(email: string): Promise<Users> {
     const user = await this.usersModel.findOne({ email }).exec();
     if (!user) {
-      throw new Error(`User with email ${email} not found`);
+      throw new NotFoundException(`User with email ${email} not found`);
     }
     return user;
   }
 
   async findOne(id: string): Promise<Users> {
-    const user = await this.usersModel.findById(id).exec();
-    if (!user) {
-      throw new Error(`User with id ${id} not found`);
+    try {
+      if (!Types.ObjectId.isValid(id)) {
+        throw new BadRequestException('Invalid user ID');
+      }
+      const user = await this.usersModel.findById(id).exec();
+      if (!user) {
+        throw new NotFoundException(`User with id ${id} not found`);
+      }
+      return user;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<Users> {
-    const updatedUser = await this.usersModel
-      .findByIdAndUpdate(id, updateUserDto, { new: true })
-      .exec();
-    if (!updatedUser) {
-      throw new Error(`User with id ${id} not found`);
+    try {
+      if (!Types.ObjectId.isValid(id)) {
+        throw new BadRequestException('Invalid user ID');
+      }
+      const updatedUser = await this.usersModel
+        .findByIdAndUpdate(id, updateUserDto)
+        .exec();
+      if (!updatedUser) {
+        throw new NotFoundException(`User with id ${id} not found`);
+      }
+      return updatedUser;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    return updatedUser;
   }
 
   async remove(id: string): Promise<Users> {
-    const deletedUser = await this.usersModel.findByIdAndDelete(id).exec();
-    if (!deletedUser) {
-      throw new Error(`User with id ${id} not found`);
+    try {
+      if (!Types.ObjectId.isValid(id)) {
+        throw new BadRequestException('Invalid user ID');
+      }
+      const deletedUser = await this.usersModel.findByIdAndDelete(id).exec();
+      if (!deletedUser) {
+        throw new NotFoundException(`User with id ${id} not found`);
+      }
+      return deletedUser;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-    return deletedUser;
   }
 }
