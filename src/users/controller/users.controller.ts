@@ -6,14 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  UseFilters,
+  // UseFilters,
 } from '@nestjs/common';
 import { UsersService } from '../service/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { MongoExceptionFilter } from '../filters/mongo-exception.filter';
+// import { MongoExceptionFilter } from '../filters/mongo-exception.filter';
 
-@UseFilters(MongoExceptionFilter)
+// @UseFilters(MongoExceptionFilter)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
