@@ -16,18 +16,37 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message: string = 'Internal server error';
+    let message: string | string[] = 'Internal server error';
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
+      const res = exception.getResponse();
+      message =
+        typeof res === 'string'
+          ? res
+          : (res as { message: string }).message || exception.message;
+    }
 
-      const exceptionResponse = exception.getResponse();
+    // mongoose validation error
+    else if ((exception as { name: string }).name === 'ValidationError') {
+      status = HttpStatus.BAD_REQUEST;
 
-      if (typeof exceptionResponse === 'string') {
-        message = exceptionResponse;
-      } else if (typeof exceptionResponse === 'object') {
-        message = (exceptionResponse as { message: string }).message;
-      }
+      message = Object.values(
+        (exception as { errors: { [key: string]: { message: string } } })
+          .errors,
+      ).map((err: { message: string }) => err.message);
+    }
+
+    // mongoose cast error (invalid ObjectId)
+    else if ((exception as { name: string }).name === 'CastError') {
+      status = HttpStatus.BAD_REQUEST;
+      message = `Invalid ${(exception as { path: string }).path}`;
+    }
+
+    // duplicate key
+    else if ((exception as { code: number }).code === 11000) {
+      status = HttpStatus.CONFLICT;
+      message = 'Already exists';
     }
 
     response.status(status).json({
@@ -36,7 +55,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message,
       path: request.url,
       timestamp: new Date().toISOString(),
-      data: null,
     });
   }
 }
