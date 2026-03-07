@@ -10,7 +10,7 @@ import {
 import { AuthService } from '../service/auth.service';
 import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 import { LocalAuthGuard } from '../guard/local-auth.guard';
-import { cookieConfig } from '../../config/cookie-config';
+import { cookieOptions } from '../../config/cookie-config';
 import { LoginDto } from '../dto/login.dto';
 import express from 'express';
 
@@ -28,8 +28,8 @@ export class AuthController {
     const tokens = await this.authService.login(req.user);
     const access_token = tokens?.access_token ?? '';
     const refresh_token = tokens?.refresh_token ?? '';
-    res.cookie('access_token', access_token, cookieConfig.access.options);
-    res.cookie('refresh_token', refresh_token, cookieConfig.refresh.options);
+    res.cookie('access_token', access_token, cookieOptions.access.options);
+    res.cookie('refresh_token', refresh_token, cookieOptions.refresh.options);
     return { access_token, refresh_token };
   }
 
