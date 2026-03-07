@@ -1,9 +1,19 @@
-export const appConfig: Record<string, string> = {
-  port: process.env.PORT || '3000',
+export interface AppConfig {
+  port: number | string;
+  env: string;
+}
+
+export interface ConfigModule {
+  isGlobal: boolean;
+  load: () => AppConfig;
+}
+
+export const appConfig: AppConfig = {
+  port: process.env.PORT ? Number(process.env.PORT) : 3000,
   env: process.env.NODE_ENV || 'development',
 };
 
-export const configModule = {
+export const configModule: ConfigModule = {
   isGlobal: true,
-  load: [() => appConfig],
+  load: () => appConfig,
 };
