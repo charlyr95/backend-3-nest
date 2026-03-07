@@ -5,7 +5,7 @@ export interface AppConfig {
 
 export interface ConfigModule {
   isGlobal: boolean;
-  load: () => AppConfig;
+  // load: () => AppConfig;
 }
 
 export const appConfig: AppConfig = {
@@ -15,5 +15,5 @@ export const appConfig: AppConfig = {
 
 export const configModule: ConfigModule = {
   isGlobal: true,
-  load: () => appConfig,
+  // load: () => appConfig,
 };
