@@ -9,16 +9,19 @@ export class Users extends Document {
   @Prop({})
   last_name: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({
+    required: [true, 'Email is required'],
+    unique: [true, 'Email already exists'],
+  })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: [true, 'Password is required'] })
   password: string;
 
   @Prop({ default: 'user', enum: ['user', 'admin'] })
   role: string;
 
-  @Prop({ default: 0, min: 0 })
+  @Prop({ default: 0, min: [0, 'Age must be a positive number'] })
   age: number;
 
   @Prop({ type: SchemaTypes.ObjectId, default: null, ref: 'carts' })

@@ -1,8 +1,31 @@
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 export class CreateUserDto {
-  first_name?: string;
-  last_name?: string;
+  @IsString()
+  first_name: string;
+
+  @IsString()
+  last_name: string;
+
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
   password: string;
-  role?: string;
-  age?: number;
+
+  @IsString()
+  role: 'user' | 'admin';
+
+  @IsNumber()
+  @Min(0)
+  @Max(120)
+  age: number;
 }

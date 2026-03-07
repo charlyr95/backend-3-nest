@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { HttpResponseInterceptor } from './interceptors/http-response.interceptor';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { GlobalExceptionFilter } from './filters/global-exception.filter';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { HttpResponseInterceptor } from './interceptors/http-response.interceptor';
 
 @Module({
   imports: [],
@@ -13,7 +13,7 @@ import { GlobalExceptionFilter } from './filters/global-exception.filter';
     },
     {
       provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
+      useClass: HttpExceptionFilter,
     },
   ],
 })
